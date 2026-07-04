@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <title>For Jaya ❤️</title>
+    <style>
+        body { margin: 0; background: linear-gradient(135deg, #ffe6f2, #ffffff); font-family: 'Arial', sans-serif; overflow: hidden; height: 100vh; display: flex; align-items: center; justify-content: center; text-align: center; color: #d63384; }
+        .screen { display: none; width: 90%; max-width: 450px; background: rgba(255, 255, 255, 0.7); padding: 30px; border-radius: 20px; box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        #screen1 { display: block; }
+        .fade-in { font-size: 1.4rem; line-height: 1.6; }
+        .flower { position: absolute; color: #ff69b4; animation: fall linear infinite; pointer-events: none; }
+        @keyframes fall { to { transform: translateY(100vh); } }
+        button { background: #d63384; color: white; border: none; padding: 12px 25px; border-radius: 25px; cursor: pointer; margin: 10px; font-size: 1rem; transition: 0.3s; }
+        button:hover { background: #b02a65; transform: scale(1.05); }
+        .music-toggle { position: fixed; top: 20px; right: 20px; cursor: pointer; font-size: 25px; z-index: 100; }
+    </style>
+</head>
+<body>
+
+<div class="music-toggle" onclick="toggleMusic()">🎵</div>
+
+<!-- Screen 1: Story -->
+<div id="screen1" class="screen">
+    <div class="fade-in">
+        <h2>Woh Pal... ✨</h2>
+        <p>Mujhe aaj bhi yaad hai woh pehli call... Jab tumne achanak mujhe propose kiya tha.</p>
+        <p>Us waqt dil ki dhadkan ruk si gayi thi. ❤️</p>
+    </div>
+    <button onclick="nextScreen()">Chalo kuch khelte hain →</button>
+</div>
+
+<!-- Screen 2: Quiz -->
+<div id="screen2" class="screen">
+    <h3 id="question">Quiz Time!</h3>
+    <div id="options"></div>
+    <p id="progress">Sawaal: 0/6</p>
+</div>
+
+<!-- Screen 3: Gift -->
+<div id="screen3" class="screen">
+    <h1 style="font-size: 4rem;">🐱</h1>
+    <p>Tumhare liye ek chota sa tohfa... Jo tumhare chehre par muskan laye.</p>
+    <h2>— Rigveda ❤️</h2>
+</div>
+
+<script>
+    // Music Logic
+    let audioCtx;
+    function toggleMusic() {
+        if (!audioCtx) {
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            let osc = audioCtx.createOscillator();
+            let gain = audioCtx.createGain();
+            osc.type = 'sine'; osc.frequency.setValueAtTime(440, audioCtx.currentTime);
+            gain.gain.setValueAtTime(0.05, audioCtx.currentTime);
+            osc.connect(gain); gain.connect(audioCtx.destination);
+            osc.start();
+        } else { audioCtx.state === 'running' ? audioCtx.suspend() : audioCtx.resume(); }
+    }
+
+    // Flowers
+    function createFlower() {
+        const f = document.createElement('div');
+        f.className = 'flower'; f.innerHTML = '🌸';
+        f.style.left = Math.random() * 100 + 'vw';
+        f.style.animationDuration = Math.random() * 3 + 3 + 's';
+        document.body.appendChild(f);
+        setTimeout(() => f.remove(), 6000);
+    }
+    setInterval(createFlower, 1000);
+
+    function nextScreen() {
+        document.getElementById('screen1').style.display = 'none';
+        document.getElementById('screen2').style.display = 'block';
+    }
+
+    const questions = [
+        { q: "Humari sabse achi yaad?", a: ["First call", "Baatein"] },
+        { q: "Tum mere liye kya ho?", a: ["Duniya", "Sab kuch"] },
+        { q: "Kya hum hamesha saath rahenge?", a: ["Haan", "Bilkul"] },
+        { q: "Main tumse kitna pyar karta hoon?", a: ["Bahut", "Infinite"] },
+        { q: "Tumhari muskaan kaisi hai?", a: ["Pyaari", "Magic"] },
+        { q: "Ready for your surprise?", a: ["Yes!", "Definitely"] }
+    ];
+
+    let count = 0;
+    function showQuestion() {
+        if(count >= 6) {
+            document.getElementById('screen2').style.display = 'none';
+            document.getElementById('screen3').style.display = 'block';
+            return;
+        }
+        document.getElementById('question').innerText = questions[count].q;
+        document.getElementById('progress').innerText = `Sawaal: ${count + 1}/6`;
+        const optDiv = document.getElementById('options');
+        optDiv.innerHTML = '';
+        questions[count].a.forEach(opt => {
+            const btn = document.createElement('button');
+            btn.innerText = opt;
+            btn.onclick = () => { count++; showQuestion(); };
+            optDiv.appendChild(btn);
+        });
+    }
+    showQuestion();
+</script>
+</body>
+</html>
